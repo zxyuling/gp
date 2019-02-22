@@ -7,10 +7,20 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 router.get('/gpmsg', function(req, res, next) {
-	gp.start().then(stock=>{
+	const id = req.query.id
+	gp.start(id).then(stock=>{
 		res.send(stock)
 	})
 });
+
+router.get('/getall', function(req, res, next) {
+	gp.getall().then(stock=>{
+		res.send(stock)
+	})
+});
+// router.get('/id', function(req, res, next) {
+	
+// });
 router.get('/getfile', function(req, res, next) {
 	console.log(222)
 	const path1 =path.join(__dirname, '../public/javascripts')

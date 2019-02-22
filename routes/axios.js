@@ -5,12 +5,12 @@ const fetch = (url, params, method = 'post') => {
     let config = {
       url: url,
       method: method,
-      headers:{
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'CGS',
-        'Content-Length':147
+      // headers:{
+      //   'Content-Type': 'application/x-www-form-urlencoded',
+      //   'User-Agent': 'CGS',
+      //   'Content-Length':147
 
-      }
+      // }
     }
     if (method.match(/get|delete|head/)) {
       config.params = params

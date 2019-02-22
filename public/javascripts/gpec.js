@@ -8,62 +8,85 @@ const option = {
         type: 'category',
         data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
-    yAxis: {
+    yAxis: [{
         type: 'value',
+        name:'资金'
         // min:-5000,
         // max:5000,
-    },
-    series: [{
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-        type: 'line',
-        smooth: true,
     },{
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
+    	type: 'value',
+    	name:'价格'
+    }],
+    series: [
+    {
+        data: [],
         type: 'line',
         smooth: true,
-    }]
+        name:'主力资金'
+    },{
+        data: [],
+        type: 'line',
+        smooth: true,
+        name:'散户资金'
+    },
+    {
+        data: [],
+        type: 'line',
+        smooth: true,
+        yAxisIndex:1,
+        name:'价格'
+    },{
+        data: [],
+        type: 'line',
+        smooth: true,
+        symbolSize:0,
+        color:['#fff'],
+        itemStyle : {  
+            normal : {  
+                lineStyle:{  
+                    color:'#fff'  
+                }  
+            }  
+        },
+
+        name:'序号'
+    },]
 };
-fetch('/gpmsg').then(res=>res.json()).then(res=>{
+
+const getmsg = (id) => {
+	fetch('/gpmsg?id='+id).then(res=>res.json()).then(res=>{
 	let date = []
 	let zin = []
 	let sin=[]
-	let yc=[]
-	let real = []
-	let money = 0
-	let status = 0
-	res.reverse().forEach((item,index,array)=>{
-		date.push(item.date)
-		zin.push((item.zin/10000).toFixed(2))
-		sin.push((item.sin/10000).toFixed(2))
-		yc.push(item.sin>0&&item.min>0?'涨'+item.date:'跌'+item.date)
-		if(array[index+5]){
-			 const sj = array[index+5].cp-item.cp
-			 real.push(sj>0?'涨'+item.date:'跌'+item.date)
-		}
-		if(item.sin>0){
-			if(status==0){
-				money = money-item.cp
-				status = 1
-			}
-		}else{
-			if(status==1){
-				money = money+item.cp
-				status = 0
-			}
-		}
-		
+	let price = []
+	let idx = []
+	res.forEach((item,index,array)=>{
+		item = item.split(',')
+		date.push(item[0])
+		idx.push(index+1)
+		zin.push((+item[1]).toFixed(2))
+		sin.push((+item[9]).toFixed(2))
+		price.push((+item[11]).toFixed(2))
 	})
-	console.log(yc.join(','))
-	console.log(real.join(','))
-	const num = real.filter((item,index)=>{
-		if(item==yc[index]){
-			return item
-		}
-	}).length
-	console.log(num/real.length)
-	console.log(money,status)
 	option.xAxis.data = date
+	option.series[3].data = idx
 	option.series[0].data = zin
 	option.series[1].data = sin
+	option.series[2].data = price
 	myecharts.setOption(option);
+})
+}
+document.querySelector('.sub').addEventListener('click',() => {
+	const val = document.querySelector('.id').value
+	getmsg(val)
+})
+
+document.querySelector('.subdate').addEventListener('click', () => {
+	const cw = option.series[0].data
+	const val = document.querySelector('.date').value
+	const val1 = document.querySelector('.date1').value
+	const v = cw.slice(+val-1,+val1).reduce((res,item) => {
+		return res+ +item
+	},0)
+	document.querySelector('.cw').innerHTML='主力合计：'+v.toFixed(2)+'w'
 })
