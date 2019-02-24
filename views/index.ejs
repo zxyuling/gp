@@ -16,8 +16,13 @@
     <input type="text" class="date1" value="100">
     <input type="submit" class="subdate">
     <span class="cw"></span>
-    <div class="j-zin zin"></div>
+    <br>
+    <%for(let i=0;i<11;i++){%>
+    <span class="j-id<%=i%>"></span>
+    <div class="j-zin<%=i%> zin"></div>
+    <%}%>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts.min.js"></script>
+    <script src="/javascripts/a.js"></script>
     <script src="/javascripts/gpec.js"></script>
   </body>
 </html>
